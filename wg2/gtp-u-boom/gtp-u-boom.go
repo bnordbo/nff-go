@@ -87,8 +87,8 @@ func encap(
 	return true
 }
 
-func genICMP(p *packet.Packet, c flow.UserContext, data String) {
-	payload, _ := hex.DecodeString(data)
+func genICMP(p *packet.Packet, c flow.UserContext, data *string) {
+	payload, _ := hex.DecodeString(*data)
         packet.GeneratePacketFromByte(p, payload)
 }
 
