@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/intel-go/nff-go/flow"
-	"github.com/intel-go/nff-go/packets"
+	"github.com/intel-go/nff-go/packet"
 	"github.com/intel-go/nff-go/types"
 )
 
