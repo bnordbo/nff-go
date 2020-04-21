@@ -2,7 +2,9 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
+	"net"
 
 	"github.com/intel-go/nff-go/flow"
 	"github.com/intel-go/nff-go/packet"
@@ -29,7 +31,7 @@ func main() {
 	}
 
 	genFn := func(p *packet.Packet, c flow.UserContext) {
-		return genICMP(p, c, srcAddr, dstAddr)
+		genICMP(p, c, srcAddr, dstAddr)
 	}
 
 	encapFn := func(p *packet.Packet, c flow.UserContext) bool {
@@ -46,12 +48,12 @@ func main() {
 }
 
 func encap(p *packet.Packet, c flow.UserContext, srcAddr, dstAddr types.IPv4Address) bool {
-	if p.EncapsulateIPv4GTP(*teid) == false {
+	if p.EncapsulateIPv4GTP(uint32(*teid)) == false {
 		log.Println("Error encapsulating GTP-U packet")
 		return false
 	}
 
-	p.ParseL4()
+	p.ParseL4ForIPv4()
 	ipv4 := p.GetIPv4NoCheck()
 	length := p.GetPacketLen()
 
@@ -67,7 +69,7 @@ func encap(p *packet.Packet, c flow.UserContext, srcAddr, dstAddr types.IPv4Addr
 	ipv4.DstAddr = dstAddr
 	ipv4.HdrChecksum = packet.SwapBytesUint16(packet.CalculateIPv4Checksum(ipv4))
 
-	udp := p.GetIDPNoCheck()
+	udp := p.GetUDPNoCheck()
 	udp.SrcPort = packet.SwapUDPPortGTPU
 	udp.DstPort = packet.SwapUDPPortGTPU
 	udp.DgramLen = uint16(length - types.EtherLen - types.IPv4MinLen)
@@ -76,7 +78,7 @@ func encap(p *packet.Packet, c flow.UserContext, srcAddr, dstAddr types.IPv4Addr
 	return true
 }
 
-func genICMP(p *packet.Packet, c flow.UserContext) {
+func genICMP(p *packet.Packet, c flow.UserContext, srcAddr, dstAddr types.IPv4Address) {
 	payload := uint(25)
 	packet.InitEmptyIPv4ICMPPacket(p, payload)
 	ipv4 := p.GetIPv4NoCheck()
@@ -84,10 +86,10 @@ func genICMP(p *packet.Packet, c flow.UserContext) {
 	ipv4.DstAddr = dstAddr
 }
 
-func stringToIPv4(ip string) (types.IPv4Address, error) {
-	ip := net.ParseIP(ip)
+func stringToIPv4(addr string) (types.IPv4Address, error) {
+	ip := net.ParseIP(addr)
 	if ip == nil {
-		return types.IPv4Address{}, fmt.Errorf("Invalid source IP address %s", srcIP)
+		return types.IPv4Address(), fmt.Errorf("Invalid source IP address %s", addr)
 	}
 	i := ip.To4()
 
