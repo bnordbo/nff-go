@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"hex"
 
 	"github.com/intel-go/nff-go/flow"
 	"github.com/intel-go/nff-go/packet"
@@ -15,6 +16,7 @@ var (
 	teid  = flag.Int("teid", 1, "GTP-U TEID")
 	srcIP = flag.String("src-ip", "", "Source IP address")
 	dstIP = flag.String("dst-ip", "", "Destination IP address")
+	data  = flag.String("data", "", "GTP-U payload")
 )
 
 func main() {
@@ -31,7 +33,7 @@ func main() {
 	}
 
 	genFn := func(p *packet.Packet, c flow.UserContext) {
-		genICMP(p, c, srcAddr, dstAddr)
+		genICMP(p, c, data)
 	}
 
 	var pkID uint16 = 0
@@ -85,12 +87,9 @@ func encap(
 	return true
 }
 
-func genICMP(p *packet.Packet, c flow.UserContext, srcAddr, dstAddr types.IPv4Address) {
-	payload := uint(25)
-	packet.InitEmptyIPv4ICMPPacket(p, payload)
-	ipv4 := p.GetIPv4NoCheck()
-	ipv4.SrcAddr = srcAddr
-	ipv4.DstAddr = dstAddr
+func genICMP(p *packet.Packet, c flow.UserContext, data *string) {
+	payload, _ := hex.DecodeString(*data)
+	packet.GeneratePacketFromByte(p, payload)
 }
 
 func stringToIPv4(addr string) (types.IPv4Address, error) {
