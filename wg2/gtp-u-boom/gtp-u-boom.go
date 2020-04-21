@@ -93,6 +93,11 @@ func genICMP(p *packet.Packet, c flow.UserContext, srcAddr, dstAddr types.IPv4Ad
 	ipv4.DstAddr = dstAddr
 }
 
+func generateGTPUPayload(emptyPacket *packet.Packet, context flow.UserContext) {
+    payload, _ := hex.DecodeString('4500001c0001000040011a830a659327b94c09850800f7ff00000000')
+    packet.GeneratePacketFromByte(emptyPacket, payload)
+}
+
 func stringToIPv4(addr string) (types.IPv4Address, error) {
 	ip := net.ParseIP(addr)
 	if ip == nil {
