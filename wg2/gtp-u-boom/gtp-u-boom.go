@@ -57,12 +57,12 @@ func encap(
 	srcAddr, dstAddr types.IPv4Address,
 	pkID uint16,
 ) bool {
-	if p.EncapsulateIPv4GTP(uint32(*teid)) == false {
+	if !p.EncapsulateIPv4GTP(uint32(*teid)) {
 		log.Println("Error encapsulating GTP-U packet")
 		return false
 	}
 
-	p.ParseL4ForIPv4()
+	p.ParseL3()
 	ipv4 := p.GetIPv4NoCheck()
 	length := p.GetPacketLen()
 
