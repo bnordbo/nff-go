@@ -53,7 +53,7 @@ func encap(
 	p *packet.Packet,
 	c flow.UserContext,
 	srcAddr, dstAddr types.IPv4Address,
-	pkID uint32,
+	pkID uint16,
 ) bool {
 	if p.EncapsulateIPv4GTP(uint32(*teid)) == false {
 		log.Println("Error encapsulating GTP-U packet")
