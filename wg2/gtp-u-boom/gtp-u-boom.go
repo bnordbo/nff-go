@@ -89,7 +89,7 @@ func genICMP(p *packet.Packet, c flow.UserContext, srcAddr, dstAddr types.IPv4Ad
 func stringToIPv4(addr string) (types.IPv4Address, error) {
 	ip := net.ParseIP(addr)
 	if ip == nil {
-		return types.IPv4Address(), fmt.Errorf("Invalid source IP address %s", addr)
+		return types.IPv4Address(0), fmt.Errorf("Invalid source IP address %s", addr)
 	}
 	i := ip.To4()
 
