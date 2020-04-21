@@ -34,7 +34,7 @@ func main() {
 		genICMP(p, c, srcAddr, dstAddr)
 	}
 
-	pkID := 0
+	var pkID uint16 = 0
 	encapFn := func(p *packet.Packet, c flow.UserContext) bool {
 		pkID++
 		return encap(p, c, srcAddr, dstAddr, pkID)
