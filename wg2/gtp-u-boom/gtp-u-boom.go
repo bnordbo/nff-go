@@ -89,7 +89,7 @@ func encap(
 
 func genICMP(p *packet.Packet, c flow.UserContext, data *string) {
 	payload, _ := hex.DecodeString(*data)
-        packet.GeneratePacketFromByte(p, payload)
+	packet.GeneratePacketFromByte(p, payload)
 }
 
 func stringToIPv4(addr string) (types.IPv4Address, error) {
