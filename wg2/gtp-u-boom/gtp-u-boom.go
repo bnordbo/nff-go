@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	teid  = flag.Int("teid", "", "GTP-U TEID")
+	teid  = flag.Int("teid", 1, "GTP-U TEID")
 	srcIP = flag.String("src-ip", "", "Source IP address")
 	dstIP = flag.String("dst-ip", "", "Destination IP address")
 )
@@ -18,12 +18,12 @@ var (
 func main() {
 	flag.Parse()
 
-	srcAddr, err = stringToIPv4(*srcIP)
+	srcAddr, err := stringToIPv4(*srcIP)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	dstAddr, err = stringToIPv4(*dstIP)
+	dstAddr, err := stringToIPv4(*dstIP)
 	if err != nil {
 		log.Fatal(err)
 	}
