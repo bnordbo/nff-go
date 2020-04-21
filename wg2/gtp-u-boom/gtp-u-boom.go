@@ -34,8 +34,10 @@ func main() {
 		genICMP(p, c, srcAddr, dstAddr)
 	}
 
+	pkID := 0
 	encapFn := func(p *packet.Packet, c flow.UserContext) bool {
-		return encap(p, c, srcAddr, dstAddr)
+		pkID++
+		return encap(p, c, srcAddr, dstAddr, pkID)
 	}
 
 	flow.SystemInit(&flow.Config{CPUList: "0-9"})
@@ -47,7 +49,12 @@ func main() {
 	flow.SystemStart()
 }
 
-func encap(p *packet.Packet, c flow.UserContext, srcAddr, dstAddr types.IPv4Address) bool {
+func encap(
+	p *packet.Packet,
+	c flow.UserContext,
+	srcAddr, dstAddr types.IPv4Address,
+	pkID uint32,
+) bool {
 	if p.EncapsulateIPv4GTP(uint32(*teid)) == false {
 		log.Println("Error encapsulating GTP-U packet")
 		return false
@@ -59,7 +66,7 @@ func encap(p *packet.Packet, c flow.UserContext, srcAddr, dstAddr types.IPv4Addr
 
 	ipv4.VersionIhl = 0x45
 	ipv4.TypeOfService = 0
-	ipv4.PacketID = 0x1513
+	ipv4.PacketID = pkID
 	ipv4.FragmentOffset = 0
 	ipv4.TimeToLive = 64
 
