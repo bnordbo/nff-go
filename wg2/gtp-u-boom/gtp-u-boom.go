@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 
 	"github.com/intel-go/nff-go/flow"
@@ -8,21 +9,44 @@ import (
 	"github.com/intel-go/nff-go/types"
 )
 
-var lorIP = types.BytesToIPv4(1, 2, 3, 4)
-var stoIP = types.BytesToIPv4(48, 8, 8, 5)
+var (
+	teid  = flag.Int("teid", "", "GTP-U TEID")
+	srcIP = flag.String("src-ip", "", "Source IP address")
+	dstIP = flag.String("dst-ip", "", "Destination IP address")
+)
 
 func main() {
+	flag.Parse()
+
+	srcAddr, err = stringToIPv4(*srcIP)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dstAddr, err = stringToIPv4(*dstIP)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	genFn := func(p *packet.Packet, c flow.UserContext) {
+		return genICMP(p, c, srcAddr, dstAddr)
+	}
+
+	encapFn := func(p *packet.Packet, c flow.UserContext) bool {
+		return encap(p, c, srcAddr, dstAddr)
+	}
+
 	flow.SystemInit(&flow.Config{CPUList: "0-9"})
 
-	mainFlow := flow.SetGenerator(genICMP, nil)
-	flow.SetHandlerDrop(mainFlow, encap, nil)
+	mainFlow := flow.SetGenerator(genFn, nil)
+	flow.SetHandlerDrop(mainFlow, encapFn, nil)
 	flow.SetStopper(mainFlow)
 
 	flow.SystemStart()
 }
 
-func encap(p *packet.Packet, c flow.UserContext) bool {
-	if p.EncapsulateIPv4GTP("TODO get from flags") == false {
+func encap(p *packet.Packet, c flow.UserContext, srcAddr, dstAddr types.IPv4Address) bool {
+	if p.EncapsulateIPv4GTP(*teid) == false {
 		log.Println("Error encapsulating GTP-U packet")
 		return false
 	}
@@ -39,23 +63,33 @@ func encap(p *packet.Packet, c flow.UserContext) bool {
 
 	ipv4.TotalLength = packet.SwapBytesUint16(uint16(length - types.EtherLen))
 	ipv4.NextProtoID = types.UDPNumber
-	ipv4.SrcAddr = stoIP
-	ipv4.DstAddr = lorIP
+	ipv4.SrcAddr = srcAddr
+	ipv4.DstAddr = dstAddr
 	ipv4.HdrChecksum = packet.SwapBytesUint16(packet.CalculateIPv4Checksum(ipv4))
 
 	udp := p.GetIDPNoCheck()
 	udp.SrcPort = packet.SwapUDPPortGTPU
 	udp.DstPort = packet.SwapUDPPortGTPU
-	udp.DgramLen = uint16(length - types.EtherLen - types.IPv4MiniLen)
+	udp.DgramLen = uint16(length - types.EtherLen - types.IPv4MinLen)
 	udp.DgramCksum = 0
 
 	return true
 }
 
-func genICMP(p *packet.Packet, c *flow.UserContext) {
+func genICMP(p *packet.Packet, c flow.UserContext) {
 	payload := uint(25)
 	packet.InitEmptyIPv4ICMPPacket(p, payload)
 	ipv4 := p.GetIPv4NoCheck()
-	ipv4.SrcAddr = stoIP
-	ipv4.DstAddr = lorIP
+	ipv4.SrcAddr = srcAddr
+	ipv4.DstAddr = dstAddr
+}
+
+func stringToIPv4(ip string) (types.IPv4Address, error) {
+	ip := net.ParseIP(ip)
+	if ip == nil {
+		return types.IPv4Address{}, fmt.Errorf("Invalid source IP address %s", srcIP)
+	}
+	i := ip.To4()
+
+	return types.BytesToIPv4(i[0], i[1], i[2], i[2]), nil
 }
