@@ -5,7 +5,7 @@
 package main
 
 import (
-	"github.com/intel-go/nff-go/flow"
+	"github.com/bnordbo/nff-go/flow"
 )
 
 func main() {

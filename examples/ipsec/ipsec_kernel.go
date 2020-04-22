@@ -5,9 +5,9 @@
 // Only IPv4, Only tunnel, Only ESP, Only AES-128-CBC
 package ipsec
 
-import "github.com/intel-go/nff-go/packet"
-import "github.com/intel-go/nff-go/flow"
-import "github.com/intel-go/nff-go/types"
+import "github.com/bnordbo/nff-go/packet"
+import "github.com/bnordbo/nff-go/flow"
+import "github.com/bnordbo/nff-go/types"
 import "bytes"
 import "unsafe"
 import "crypto/aes"

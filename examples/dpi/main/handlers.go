@@ -7,10 +7,10 @@ import (
 	"hash/fnv"
 	"sync/atomic"
 
-	"github.com/intel-go/nff-go/examples/dpi/pattern"
-	"github.com/intel-go/nff-go/flow"
-	"github.com/intel-go/nff-go/packet"
-	"github.com/intel-go/nff-go/types"
+	"github.com/bnordbo/nff-go/examples/dpi/pattern"
+	"github.com/bnordbo/nff-go/flow"
+	"github.com/bnordbo/nff-go/packet"
+	"github.com/bnordbo/nff-go/types"
 )
 
 type localCounters struct {

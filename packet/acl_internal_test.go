@@ -60,7 +60,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/intel-go/nff-go/types"
+	"github.com/bnordbo/nff-go/types"
 )
 
 // Data to generate L2 rules

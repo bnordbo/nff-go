@@ -37,8 +37,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/intel-go/nff-go/common"
-	"github.com/intel-go/nff-go/types"
+	"github.com/bnordbo/nff-go/common"
+	"github.com/bnordbo/nff-go/types"
 )
 
 type rawL2Rule struct {

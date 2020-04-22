@@ -4,8 +4,8 @@
 
 package main
 
-import "github.com/intel-go/nff-go/examples/ipsec"
-import "github.com/intel-go/nff-go/flow"
+import "github.com/bnordbo/nff-go/examples/ipsec"
+import "github.com/bnordbo/nff-go/flow"
 import "flag"
 
 func main() {

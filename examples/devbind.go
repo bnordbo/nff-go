@@ -4,9 +4,9 @@ import (
 	"flag"
 	"log"
 
-	"github.com/intel-go/nff-go/devices"
-	"github.com/intel-go/nff-go/flow"
-	"github.com/intel-go/nff-go/packet"
+	"github.com/bnordbo/nff-go/devices"
+	"github.com/bnordbo/nff-go/flow"
+	"github.com/bnordbo/nff-go/packet"
 )
 
 // Example that shows how to bind a driver to a NIC

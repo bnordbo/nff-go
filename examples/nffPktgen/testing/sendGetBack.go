@@ -13,9 +13,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/intel-go/nff-go/examples/nffPktgen/generator"
-	"github.com/intel-go/nff-go/flow"
-	"github.com/intel-go/nff-go/packet"
+	"github.com/bnordbo/nff-go/examples/nffPktgen/generator"
+	"github.com/bnordbo/nff-go/flow"
+	"github.com/bnordbo/nff-go/packet"
 )
 
 var (

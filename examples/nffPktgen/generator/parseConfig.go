@@ -14,7 +14,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/intel-go/nff-go/types"
+	"github.com/bnordbo/nff-go/types"
 )
 
 var mixPattern = regexp.MustCompile(`^mix[0-9]*$`)

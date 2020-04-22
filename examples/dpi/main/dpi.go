@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"github.com/flier/gohs/hyperscan"
-	"github.com/intel-go/nff-go/examples/dpi/pattern"
-	"github.com/intel-go/nff-go/flow"
-	"github.com/intel-go/nff-go/packet"
+	"github.com/bnordbo/nff-go/examples/dpi/pattern"
+	"github.com/bnordbo/nff-go/flow"
+	"github.com/bnordbo/nff-go/packet"
 )
 
 // Sample input pcap files can be downloaded from http://wiresharkbook.com/studyguide.html

@@ -15,7 +15,7 @@ func init() {
 	}
 }
 
-// If it will fail due to strange mempool behaviour feel free to reopen https://github.com/intel-go/nff-go/issues/301
+// If it will fail due to strange mempool behaviour feel free to reopen https://github.com/bnordbo/nff-go/issues/301
 func TestMerge(t *testing.T) {
 	scenarios := []pipelineScenario{getGet, segmGet, multipleSegm, singleSegm, getCopy, copyCopy, segmCopy}
 	addSegmVariants := []bool{true, false}

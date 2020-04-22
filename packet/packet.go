@@ -45,9 +45,9 @@ import (
 	"fmt"
 	"unsafe"
 
-	. "github.com/intel-go/nff-go/common"
-	"github.com/intel-go/nff-go/internal/low"
-	"github.com/intel-go/nff-go/types"
+	. "github.com/bnordbo/nff-go/common"
+	"github.com/bnordbo/nff-go/internal/low"
+	"github.com/bnordbo/nff-go/types"
 )
 
 var mbufStructSize uintptr
