@@ -7,7 +7,7 @@ import socket
 import sys
 
 PGW_IP="45.8.8.45"
-IMCP_DST_IP="185.76.9.133"
+ICMP_DST_IP="185.76.9.133"
 
 def parse_opt():
     usage = "usage: %prog [options] IMSI MSISDN APN"
