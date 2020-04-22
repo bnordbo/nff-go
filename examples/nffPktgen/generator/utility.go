@@ -10,8 +10,8 @@ import (
 	"os"
 	"sync/atomic"
 
-	"github.com/intel-go/nff-go/flow"
-	"github.com/intel-go/nff-go/packet"
+	"github.com/bnordbo/nff-go/flow"
+	"github.com/bnordbo/nff-go/packet"
 )
 
 var gen generator

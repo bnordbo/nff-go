@@ -1,4 +1,4 @@
-module github.com/intel-go/nff-go
+module github.com/bnordbo/nff-go
 
 require (
 	github.com/docker/distribution v2.7.1+incompatible // indirect

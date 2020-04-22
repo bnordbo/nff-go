@@ -7,9 +7,9 @@
 package flow
 
 import (
-	"github.com/intel-go/nff-go/common"
-	"github.com/intel-go/nff-go/packet"
-	"github.com/intel-go/nff-go/types"
+	"github.com/bnordbo/nff-go/common"
+	"github.com/bnordbo/nff-go/packet"
+	"github.com/bnordbo/nff-go/types"
 )
 
 func handleARPICMPRequests(current *packet.Packet, context UserContext) bool {

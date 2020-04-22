@@ -3,9 +3,9 @@ package main
 import "sync/atomic"
 import "time"
 import "unsafe"
-import "github.com/intel-go/nff-go/types"
-import "github.com/intel-go/nff-go/flow"
-import "github.com/intel-go/nff-go/packet"
+import "github.com/bnordbo/nff-go/types"
+import "github.com/bnordbo/nff-go/flow"
+import "github.com/bnordbo/nff-go/packet"
 
 var rulesp unsafe.Pointer
 

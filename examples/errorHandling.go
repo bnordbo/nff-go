@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/intel-go/nff-go/common"
-	"github.com/intel-go/nff-go/flow"
-	"github.com/intel-go/nff-go/packet"
+	"github.com/bnordbo/nff-go/common"
+	"github.com/bnordbo/nff-go/flow"
+	"github.com/bnordbo/nff-go/packet"
 )
 
 var l3Rules *packet.L3Rules

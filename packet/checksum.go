@@ -7,8 +7,8 @@ package packet
 import (
 	"unsafe"
 
-	"github.com/intel-go/nff-go/internal/low"
-	. "github.com/intel-go/nff-go/types"
+	"github.com/bnordbo/nff-go/internal/low"
+	. "github.com/bnordbo/nff-go/types"
 )
 
 // Setting up flags for hardware offloading for hardware calculation of checksums

@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/intel-go/nff-go/types"
+	"github.com/bnordbo/nff-go/types"
 )
 
 func init() {

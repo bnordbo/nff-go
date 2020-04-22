@@ -7,7 +7,7 @@ package main
 import (
 	"flag"
 
-	"github.com/intel-go/nff-go/flow"
+	"github.com/bnordbo/nff-go/flow"
 )
 
 // This is a test for pure send/receive performance measurements. No

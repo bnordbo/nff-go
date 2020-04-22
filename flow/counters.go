@@ -12,8 +12,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/intel-go/nff-go/common"
-	"github.com/intel-go/nff-go/internal/low"
+	"github.com/bnordbo/nff-go/common"
+	"github.com/bnordbo/nff-go/internal/low"
 )
 
 const (
