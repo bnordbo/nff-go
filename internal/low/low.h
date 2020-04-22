@@ -36,7 +36,9 @@
 
 // These constants are get from DPDK and checked for performance
 #define RX_RING_SIZE 128
-#define TX_RING_SIZE 2048
+// #define TX_RING_SIZE 2048
+// Maximum for AWS interface with 4 core
+#define TX_RING_SIZE 1024
 
 // 2 queues are enough for handling 40GBits. Should be checked for other NICs.
 // TODO This macro should be a function that will dynamically return the needed number of cores.
