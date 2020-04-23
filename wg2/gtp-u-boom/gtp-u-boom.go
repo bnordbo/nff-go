@@ -14,52 +14,54 @@ import (
 )
 
 var (
-	teid  = flag.Int("teid", 1, "GTP-U TEID")
-	srcIP = flag.String("src-ip", "", "Source IP address")
-	dstIP = flag.String("dst-ip", "", "Destination IP address")
-	data  = flag.String("data", "", "GTP-U payload")
+	teid   = flag.Int("teid", 1, "GTP-U TEID")
+	srcIP  = flag.String("src-ip", "", "Source IP address")
+	dstIP  = flag.String("dst-ip", "", "Destination IP address")
+	data   = flag.String("data", "", "GTP-U payload")
+	output = flag.Int("port", 0, "DPDK output port")
 )
 
 func main() {
-        mode := flag.Int("mode", 2, "mode of generating:\n0 - fast generate that will be slowed in a second.\n1 - time-based generate send by 32 packets.\n2 - time-based generate send by 1 packet.")
-        output := flag.Int("port", 1, "output port")
-        flag.Parse()
-        outputPort := uint16(*output)
-        srcAddr, err := stringToIPv4(*srcIP)
-        if err != nil {
-                log.Fatal(err)
-        }
+	mode := flag.Int("mode", 2, "mode of generating:\n0 - fast generate that will be slowed in a second.\n1 - time-based generate send by 32 packets.\n2 - time-based generate send by 1 packet.")
+	flag.Parse()
+	srcAddr, err := stringToIPv4(*srcIP)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-        dstAddr, err := stringToIPv4(*dstIP)
-        if err != nil {
-                log.Fatal(err)
-        }
-        flow.SystemInit(nil)
+	dstAddr, err := stringToIPv4(*dstIP)
+	if err != nil {
+		log.Fatal(err)
+	}
+	flow.SystemInit(nil)
+
+	outputPort := uint16(*output)
 
 	var pkID uint16 = 0
 	encapFn := func(p *packet.Packet, c flow.UserContext) {
-               pkID++
-               encap(p, c, srcAddr, dstAddr, data, pkID)
-        //        generatePacket1(p, c)
-        }
+		pkID++
+		encap(p, c, srcAddr, dstAddr, data, pkID)
+		//        generatePacket1(p, c)
+	}
 
-        switch *mode {
-        case 0:
-                firstFlow, genChannel, _ := flow.SetFastGenerator(generatePacket, 3500, nil)
-                flow.CheckFatal(flow.SetSender(firstFlow, outputPort))
-                go updateSpeed(genChannel)
-                flow.SystemStart()
-        case 1:
-                firstFlow := flow.SetGenerator(encapFn, nil)
-                flow.CheckFatal(flow.SetSender(firstFlow, outputPort))
-                flow.SystemStart()
-        case 2:
-                temp, _ := (flow.SetReceiver(outputPort))
-                flow.SetStopper(temp)
-                flow.SystemInitPortsAndMemory()
-                generatePacket2(outputPort)
-        }
+	switch *mode {
+	case 0:
+		firstFlow, genChannel, _ := flow.SetFastGenerator(encapFn, 3500, nil)
+		flow.CheckFatal(flow.SetSender(firstFlow, outputPort))
+		go updateSpeed(genChannel)
+		flow.SystemStart()
+	case 1:
+		firstFlow := flow.SetGenerator(encapFn, nil)
+		flow.CheckFatal(flow.SetSender(firstFlow, outputPort))
+		flow.SystemStart()
+	case 2:
+		temp, _ := (flow.SetReceiver(outputPort))
+		flow.SetStopper(temp)
+		flow.SystemInitPortsAndMemory()
+		generatePacket2(outputPort)
+	}
 }
+
 /*
 func main() {
 	flag.Parse()
@@ -184,7 +186,7 @@ var np = 0
 
 func generatePacket1(pkt *packet.Packet, context flow.UserContext) {
 	packet.InitEmptyIPv4Packet(pkt, 1300)
-        pkt.Ether.DAddr = [6]uint8{0x06, 0x9a, 0x4b, 0x5a, 0x34, 0xa0}
+	pkt.Ether.DAddr = [6]uint8{0x06, 0x9a, 0x4b, 0x5a, 0x34, 0xa0}
 	time.Sleep(175 * time.Microsecond)
 }
 
@@ -245,4 +247,3 @@ func updateSpeed(genChannel chan uint64) {
 		}
 	}
 }
-

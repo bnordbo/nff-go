@@ -10,5 +10,4 @@ debug:
 	$(MAKE) NFF_GO_DEBUG=y
 
 
-include $(PATH_TO_MK)/intermediate.mk
 include $(PATH_TO_MK)/leaf.mk
