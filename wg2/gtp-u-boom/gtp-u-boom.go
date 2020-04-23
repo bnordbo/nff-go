@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"time"
 
 	"github.com/bnordbo/nff-go/flow"
 	"github.com/bnordbo/nff-go/packet"
@@ -40,7 +39,6 @@ func main() {
 	encapFn := func(p *packet.Packet, c flow.UserContext) {
 		pkID++
 		encap(p, c, srcAddr, dstAddr, data, pkID)
-		//        generatePacket1(p, c)
 	}
 
 	firstFlow, genChannel, _ := flow.SetFastGenerator(encapFn, 64, nil)
@@ -48,68 +46,6 @@ func main() {
 	go updateSpeed(genChannel)
 	flow.SystemStart()
 }
-
-/*
-func main() {
-	flag.Parse()
-
-	srcAddr, err := stringToIPv4(*srcIP)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	dstAddr, err := stringToIPv4(*dstIP)
-	if err != nil {
-		log.Fatal(err)
-	}
-	println(srcAddr.String(), dstAddr.String())
-	//genFn := func(p *packet.Packet, c flow.UserContext) {
-	//	genICMP(p, c, data)
-	//}
-
-	/*var pkID uint16 = 0
-	encapFn := func(p *packet.Packet, c flow.UserContext) {
-		pkID++
-	//	encap(p, c, srcAddr, dstAddr, data, pkID)
-		generatePacket1(p, c)
-	}*
-
-/*	config := flow.Config{
-		// Is required for KNI
-		NeedKNI: false,
-		CPUList: "0-3",
-//		SendCPUCoresPerPort: 1,
-//		TXQueuesNumberPerPort: 4,
-	}
-
-	flow.CheckFatal(flow.SystemInit(&config))
-	kni, err := flow.CreateKniDevice(uint16(*kniport), "kni_eth1")
-	flow.CheckFatal(err)
-	inputFlow, err := flow.SetReceiver(uint16(0))
-	flow.CheckFatal(err)
-	toKNIFlow, err := flow.SetSeparator(inputFlow, arpSeparator, nil)
-	flow.CheckFatal(err)
-	fromKNIFlow, err := flow.SetSenderReceiverKNI(toKNIFlow, kni, true)
-	flow.CheckFatal(err)
-	outputFlow, err := flow.SetMerger(inputFlow, fromKNIFlow)
-	flow.CheckFatal(err)
-	flow.CheckFatal(flow.SetSender(outputFlow, uint16(0)))
-*
-	flow.SystemInit(nil)
-	gtpFlow := flow.SetGenerator(generatePacket1, nil)
-//	flow.SetHandlerDrop(mainFlow, encapFn, nil)
-	// duplicate generated packet to pcap
-	//pcapFlow, _ := flow.SetCopier(mainFlow)
-	//flow.SetSenderFile(pcapFlow, "/tmp/gtp-u.pcap")
-	// Send all generated packets to the output port
-	flow.SetSender(gtpFlow, 0)
-//	flow.SetSenderOS(mainFlow, "eth1")
-	//flow.SetStopper(mainFlow)
-//	temp, _ := (flow.SetReceiver(0))
-//	flow.SetStopper(temp)
-	//flow.SystemInitPortsAndMemory()
-	flow.SystemStart()
-}*/
 
 func encap(
 	p *packet.Packet,
@@ -167,15 +103,28 @@ func stringToIPv4(addr string) (types.IPv4Address, error) {
 	i := ip.To4()
 
 	return types.BytesToIPv4(i[0], i[1], i[2], i[3]), nil
+
+}
+
+func updateSpeed(genChannel chan uint64) {
+	var load int
+	for {
+		// Can be file or any other source
+		if _, err := fmt.Scanf("%d", &load); err == nil {
+			genChannel <- uint64(load)
+		}
+	}
+}
+
+func arpSeparator(p *packet.Packet, c flow.UserContext) bool {
+	p.ParseL3()
+	if p.GetARP() != nil {
+		return false
+	}
+	return true
 }
 
 var np = 0
-
-func generatePacket1(pkt *packet.Packet, context flow.UserContext) {
-	packet.InitEmptyIPv4Packet(pkt, 1300)
-	pkt.Ether.DAddr = [6]uint8{0x06, 0x9a, 0x4b, 0x5a, 0x34, 0xa0}
-	time.Sleep(175 * time.Microsecond)
-}
 
 func dump(currentPacket *packet.Packet, context flow.UserContext) {
 	if np < 9 /*dump first three packets */ {
@@ -199,38 +148,5 @@ func dump(currentPacket *packet.Packet, context flow.UserContext) {
 		}
 		fmt.Println("----------------------------------------------------------")
 		np++
-	}
-}
-
-func arpSeparator(p *packet.Packet, c flow.UserContext) bool {
-	p.ParseL3()
-	if p.GetARP() != nil {
-		return false
-	}
-	return true
-}
-
-func generatePacket(pkt *packet.Packet, context flow.UserContext) {
-	packet.InitEmptyIPv4Packet(pkt, 1300)
-	pkt.Ether.DAddr = [6]uint8{0x00, 0x11, 0x22, 0x33, 0x44, 0x55}
-}
-
-func generatePacket2(port uint16) {
-	for {
-		pkt, _ := packet.NewPacket()
-		packet.InitEmptyIPv4Packet(pkt, 1300)
-		pkt.Ether.DAddr = [6]uint8{0x00, 0x11, 0x22, 0x33, 0x44, 0x55}
-		pkt.SendPacket(port)
-		time.Sleep(175 * time.Microsecond)
-	}
-}
-
-func updateSpeed(genChannel chan uint64) {
-	var load int
-	for {
-		// Can be file or any other source
-		if _, err := fmt.Scanf("%d", &load); err == nil {
-			genChannel <- uint64(load)
-		}
 	}
 }
