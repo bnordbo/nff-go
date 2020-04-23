@@ -43,8 +43,10 @@ if "__main__" == __name__:
     sock.close()
     resp = gtp.GTPHeader(data)
     if (resp["GTPv2 Create Session Response"]["IE Cause"].Cause == 16):
-        # request aceptec
-        pgwu_teid = resp["GTPv2 Create Session Response"]["IE F-TEID"].GRE_Key
+        # request accepted
+        # GTP-U TEID is XORed with GTP-C TEID that we can decode.
+        # TODO: Fix scapy decoding and submit PR
+        pgwu_teid = resp["GTPv2 Create Session Response"]["IE F-TEID"].GRE_Key ^ 0x8000
         allocated_ip = resp["GTPv2 Create Session Response"]["IE PAA"].ipv4
         icmp_packet = IP(src=allocated_ip, dst=ICMP_DST_IP)/ICMP()
         print("Session created.\nIP={}\nPGWU_TEID={}\nGTPU_PAYLOAD={}".format(allocated_ip, pgwu_teid, icmp_packet.build().hex()))
