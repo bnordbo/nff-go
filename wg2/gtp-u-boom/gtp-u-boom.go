@@ -22,7 +22,6 @@ var (
 )
 
 func main() {
-	mode := flag.Int("mode", 2, "mode of generating:\n0 - fast generate that will be slowed in a second.\n1 - time-based generate send by 32 packets.\n2 - time-based generate send by 1 packet.")
 	flag.Parse()
 	srcAddr, err := stringToIPv4(*srcIP)
 	if err != nil {
@@ -44,22 +43,10 @@ func main() {
 		//        generatePacket1(p, c)
 	}
 
-	switch *mode {
-	case 0:
-		firstFlow, genChannel, _ := flow.SetFastGenerator(encapFn, 3500, nil)
-		flow.CheckFatal(flow.SetSender(firstFlow, outputPort))
-		go updateSpeed(genChannel)
-		flow.SystemStart()
-	case 1:
-		firstFlow := flow.SetGenerator(encapFn, nil)
-		flow.CheckFatal(flow.SetSender(firstFlow, outputPort))
-		flow.SystemStart()
-	case 2:
-		temp, _ := (flow.SetReceiver(outputPort))
-		flow.SetStopper(temp)
-		flow.SystemInitPortsAndMemory()
-		generatePacket2(outputPort)
-	}
+	firstFlow, genChannel, _ := flow.SetFastGenerator(encapFn, 64, nil)
+	flow.CheckFatal(flow.SetSender(firstFlow, outputPort))
+	go updateSpeed(genChannel)
+	flow.SystemStart()
 }
 
 /*
